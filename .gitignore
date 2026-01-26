@@ -1,0 +1,42 @@
+# Java / build
+target/
+build/
+out/
+*.class
+*.jar
+*.log
+
+# Maven
+.mvn/
+pom.xml.tag
+pom.xml.next
+pom.xml.versionsBackup
+release.properties
+
+# Gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+.idea/dataSources/
+.idea/dataSources.ids
+.idea/sqlDataSources.xml
+.idea/dictionaries/
+
+.DS_Store
+Thumbs.db
+.vscode/
+.classpath
+.project
+.settings/
