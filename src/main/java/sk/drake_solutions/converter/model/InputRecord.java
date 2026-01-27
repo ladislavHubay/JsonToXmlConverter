@@ -11,12 +11,7 @@ public class InputRecord {
     private double amount;
     private int vat;
 
-    public InputRecord(String id, String type, String created, double amount, int vat) {
-        this.id = id;
-        this.type = type;
-        this.created = created;
-        this.amount = amount;
-        this.vat = vat;
+    public InputRecord() {
     }
 
     public String getId() {
