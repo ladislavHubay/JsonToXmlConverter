@@ -1,9 +1,12 @@
 package sk.drake_solutions.converter;
 
 import sk.drake_solutions.converter.model.InputRecord;
+import sk.drake_solutions.converter.model.OutputRecord;
 import sk.drake_solutions.converter.service.JsonReader;
+import sk.drake_solutions.converter.service.ValidationService;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -17,15 +20,13 @@ public class JsonToXmlConverterApplication {
         try {
             File jsonFile = new File("D:\\JsonToXmlConverter\\test_1.json");
 
-            System.out.println("Cesta: " + jsonFile.getAbsolutePath());
-            System.out.println("Existuje: " + jsonFile.exists());
-
             JsonReader jsonReader = new JsonReader();
             List<InputRecord> records = jsonReader.read(jsonFile);
 
-            System.out.println("Pocet zaznamov: " + records.size());
+            ValidationService validationService = new ValidationService();
+            List<OutputRecord> records1 = validationService.validateAndMap(records, LocalDate.parse("2026-01-01"), LocalDate.parse("2026-01-31"));
 
-            for (InputRecord record : records) {
+            for (OutputRecord record : records1) {
                 System.out.println(
                         record.getId() + "\n" +
                         record.getType() + "\n" +

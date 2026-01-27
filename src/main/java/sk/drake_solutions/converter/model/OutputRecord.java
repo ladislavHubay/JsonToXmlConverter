@@ -3,7 +3,7 @@ package sk.drake_solutions.converter.model;
 import java.time.LocalDate;
 
 /**
- * Zaznam vystupu do XML.
+ * Zaznam pripraveny na vystup.
  */
 public class OutputRecord {
 

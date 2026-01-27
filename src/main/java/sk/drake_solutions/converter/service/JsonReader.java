@@ -15,6 +15,12 @@ public class JsonReader {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Metoda nacitava udaje z konkretneho umiestnenia na zaklade cesty v jsonFile.
+     * @param jsonFile Cesta umiestnenia suboru.
+     * @return Vracia zoznam vstupnych udajov.
+     * @throws IOException Nastane ak vznikne chyba pri nacitani zo suboru.
+     */
     public List<InputRecord> read(File jsonFile) throws IOException {
         return objectMapper.readValue(
                 jsonFile,
