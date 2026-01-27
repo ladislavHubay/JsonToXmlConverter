@@ -3,6 +3,8 @@ package sk.drake_solutions.converter.service;
 import sk.drake_solutions.converter.model.InputRecord;
 import sk.drake_solutions.converter.model.OutputRecord;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -38,13 +40,13 @@ public class ValidationService {
                 continue;
             }
 
-            if(input.getAmount() <= 0){
+            if(input.getAmount().compareTo(BigDecimal.ZERO) <= 0){
                 System.out.println("Zaznam bol preskoceny: suma musi byt kladne cislo vacsie ako nula");
                 continue;
             }
 
-            if(input.getVat() <= 0){
-                System.out.println("Zaznam bol preskoceny: hodnota DPH musi byt kladne cislo vacsie ako nula");
+            if(input.getVat() < 0 || input.getVat() > 100){
+                System.out.println("Zaznam bol preskoceny: hodnota DPH musi byt cele cislo v intervale 0 - 100");
                 continue;
             }
 
@@ -53,7 +55,15 @@ public class ValidationService {
                 continue;
             }
 
-            double amountWithVat = input.getAmount() * (1 + input.getVat() / 100.0);
+            BigDecimal vatPercent = BigDecimal.valueOf(input.getVat());         // int -> BigDecimal
+            BigDecimal vatRate = vatPercent.divide(BigDecimal.valueOf(100),     // vatRate / 100
+                    4,                                                          // 4 desatinne miesta
+                    RoundingMode.HALF_UP);                                      // klasicke zaokruhlovanie
+
+            BigDecimal multiplier = BigDecimal.ONE.add(vatRate);                // vatRate + 1
+
+            BigDecimal amountWithVat = input.getAmount().multiply(multiplier)   // input.getAmount() * multiplier
+                    .setScale(2, RoundingMode.HALF_UP);                // klasicke matematicke zaokruhlenie na 2 desatinne miesta
 
             outputs.add(new OutputRecord(
                     input.getId(),

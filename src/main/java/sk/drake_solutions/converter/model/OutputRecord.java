@@ -1,5 +1,6 @@
 package sk.drake_solutions.converter.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -10,11 +11,11 @@ public class OutputRecord {
     private String id;
     private String type;
     private LocalDate created;
-    private double amount;
+    private BigDecimal amount;
     private int vat;
-    private double amountWithVat;
+    private BigDecimal amountWithVat;
 
-    public OutputRecord(String id, String type, LocalDate created, double amount, int vat, double amountWithVat) {
+    public OutputRecord(String id, String type, LocalDate created, BigDecimal amount, int vat, BigDecimal amountWithVat) {
         this.id = id;
         this.type = type;
         this.created = created;
@@ -47,11 +48,11 @@ public class OutputRecord {
         this.created = created;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -63,11 +64,11 @@ public class OutputRecord {
         this.vat = vat;
     }
 
-    public double getAmountWithVat() {
+    public BigDecimal getAmountWithVat() {
         return amountWithVat;
     }
 
-    public void setAmountWithVat(double amountWithVat) {
+    public void setAmountWithVat(BigDecimal amountWithVat) {
         this.amountWithVat = amountWithVat;
     }
 }

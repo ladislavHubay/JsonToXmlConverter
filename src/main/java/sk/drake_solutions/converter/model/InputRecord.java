@@ -1,5 +1,7 @@
 package sk.drake_solutions.converter.model;
 
+import java.math.BigDecimal;
+
 /**
  * Zaznam zo vstupnych udajov.
  */
@@ -8,7 +10,7 @@ public class InputRecord {
     private String id;
     private String type;
     private String created;
-    private double amount;
+    private BigDecimal amount;
     private int vat;
 
     public InputRecord() {
@@ -38,11 +40,11 @@ public class InputRecord {
         this.created = created;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

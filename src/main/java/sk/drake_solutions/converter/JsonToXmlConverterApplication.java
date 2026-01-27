@@ -4,8 +4,10 @@ import sk.drake_solutions.converter.model.InputRecord;
 import sk.drake_solutions.converter.model.OutputRecord;
 import sk.drake_solutions.converter.service.JsonReader;
 import sk.drake_solutions.converter.service.ValidationService;
+import sk.drake_solutions.converter.service.XmlWriter;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -14,30 +16,22 @@ import java.util.List;
  */
 public class JsonToXmlConverterApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        // len pre uceli otestovania funkcnosti
-        try {
-            File jsonFile = new File("D:\\JsonToXmlConverter\\test_1.json");
+        // Len na ucel testovania
 
-            JsonReader jsonReader = new JsonReader();
-            List<InputRecord> records = jsonReader.read(jsonFile);
+        File inputJson = new File("D:/JsonToXmlConverter/test_1.json");
+        File outputXml = new File("D:/JsonToXmlConverter/output.xml");
 
-            ValidationService validationService = new ValidationService();
-            List<OutputRecord> records1 = validationService.validateAndMap(records, LocalDate.parse("2026-01-01"), LocalDate.parse("2026-01-31"));
+        LocalDate startDate = LocalDate.of(2026, 1, 1);
+        LocalDate endDate = LocalDate.of(2026, 1, 31);
 
-            for (OutputRecord record : records1) {
-                System.out.println(
-                        record.getId() + "\n" +
-                        record.getType() + "\n" +
-                        record.getCreated() + "\n" +
-                        record.getAmount() + "\n" +
-                        record.getVat()
-                );
-            }
+        JsonReader jsonReader = new JsonReader();
+        ValidationService validationService = new ValidationService();
+        XmlWriter xmlWriter = new XmlWriter();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<InputRecord> inputRecords = jsonReader.read(inputJson);
+        List<OutputRecord> outputRecords = validationService.validateAndMap(inputRecords, startDate, endDate);
+        xmlWriter.write(outputRecords, outputXml);
     }
 }
