@@ -11,7 +11,7 @@ public class InputRecord {
     private String type;
     private String created;
     private BigDecimal amount;
-    private int vat;
+    private BigDecimal vat;
 
     public InputRecord() {
     }
@@ -48,11 +48,11 @@ public class InputRecord {
         this.amount = amount;
     }
 
-    public int getVat() {
+    public BigDecimal getVat() {
         return vat;
     }
 
-    public void setVat(int vat) {
+    public void setVat(BigDecimal vat) {
         this.vat = vat;
     }
 }

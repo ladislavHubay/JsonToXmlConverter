@@ -45,8 +45,15 @@ public class ValidationService {
                 continue;
             }
 
-            if(input.getVat() < 0 || input.getVat() > 100){
-                System.out.println("Zaznam bol preskoceny: hodnota DPH musi byt cele cislo v intervale 0 - 100");
+            int vat;
+            try {
+                vat = input.getVat().intValueExact();
+                if (vat < 0 || vat > 100) {
+                    System.out.println("Záznam bol preskočený: hodnota DPH musí byť v intervale 0 - 100");
+                    continue;
+                }
+            } catch (ArithmeticException e) {
+                System.out.println("Záznam bol preskočený: hodnota DPH musí byť celé číslo");
                 continue;
             }
 
@@ -55,7 +62,7 @@ public class ValidationService {
                 continue;
             }
 
-            BigDecimal vatPercent = BigDecimal.valueOf(input.getVat());         // int -> BigDecimal
+            BigDecimal vatPercent = BigDecimal.valueOf(vat);                    // int -> BigDecimal
             BigDecimal vatRate = vatPercent.divide(BigDecimal.valueOf(100),     // vatRate / 100
                     4,                                                          // 4 desatinne miesta
                     RoundingMode.HALF_UP);                                      // klasicke zaokruhlovanie
@@ -70,7 +77,7 @@ public class ValidationService {
                     input.getType(),
                     createdDate,
                     input.getAmount(),
-                    input.getVat(),
+                    vat,
                     amountWithVat
             ));
         }
