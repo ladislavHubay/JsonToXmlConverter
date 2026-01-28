@@ -76,7 +76,7 @@ public class XmlWriter {
 
             transformer.transform(source, result);
 
-            System.out.println("XML saved: " + outputFile.getAbsolutePath());
+            System.out.println("XML bolo ulozene: " + outputFile.getAbsolutePath());
 
         } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();

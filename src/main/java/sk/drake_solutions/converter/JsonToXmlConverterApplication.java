@@ -1,37 +1,49 @@
 package sk.drake_solutions.converter;
 
-import sk.drake_solutions.converter.model.InputRecord;
-import sk.drake_solutions.converter.model.OutputRecord;
-import sk.drake_solutions.converter.service.JsonReader;
-import sk.drake_solutions.converter.service.ValidationService;
-import sk.drake_solutions.converter.service.XmlWriter;
+import sk.drake_solutions.converter.cli.ArgumentParser;
+import sk.drake_solutions.converter.service.FileProcessor;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
+import java.util.Scanner;
 
 /**
  * Spustanie aplikacie.
  */
 public class JsonToXmlConverterApplication {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        String inputDir;
+        String outputDir;
+        String startDate;
+        String endDate;
 
-        // Len na ucel testovania
+        if (args.length > 0) {
+            ArgumentParser parser = new ArgumentParser(args);
+            inputDir = parser.getInputDir();
+            outputDir = parser.getOutputDir();
+            startDate = parser.getStartDate();
+            endDate = parser.getEndDate();
+        } else {
+            Scanner scanner = new Scanner(System.in);
 
-        File inputJson = new File("D:/JsonToXmlConverter/test_1.json");
-        File outputXml = new File("D:/JsonToXmlConverter/output.xml");
+            System.out.print("Zadaj cestu k vstupnemu adresaru: ");
+            inputDir = scanner.nextLine();
 
-        LocalDate startDate = LocalDate.of(2026, 1, 1);
-        LocalDate endDate = LocalDate.of(2026, 1, 31);
+            System.out.print("Zadaj cestu k vystupnemu adresaru: ");
+            outputDir = scanner.nextLine();
 
-        JsonReader jsonReader = new JsonReader();
-        ValidationService validationService = new ValidationService();
-        XmlWriter xmlWriter = new XmlWriter();
+            System.out.print("Zadaj platnost od (YYYY-MM-DD): ");
+            startDate = scanner.nextLine();
 
-        List<InputRecord> inputRecords = jsonReader.read(inputJson);
-        List<OutputRecord> outputRecords = validationService.validateAndMap(inputRecords, startDate, endDate);
-        xmlWriter.write(outputRecords, outputXml);
+            System.out.print("Zadaj platnost do (YYYY-MM-DD): ");
+            endDate = scanner.nextLine();
+        }
+
+        FileProcessor fileProcessor = new FileProcessor();
+        fileProcessor.process(
+                inputDir,
+                outputDir,
+                startDate,
+                endDate
+        );
     }
 }
