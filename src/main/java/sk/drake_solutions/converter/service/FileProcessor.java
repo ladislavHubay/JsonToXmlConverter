@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyPair;
+import java.security.cert.X509Certificate;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -125,20 +127,12 @@ public class FileProcessor {
     }
 
     /**
-     * Spracuje jeden konkretny JSON subor.
+     * Spracuje jeden konkretny JSON subor (ulozi ako XML a vytvori dokument s digitalnym podpisom pre XML).
      * @param jsonFile Cesta ku konkretnemu JSON suboru.
      */
     private void processSingleJsonFile(Path jsonFile) {
         try {
-            List<InputRecord> inputRecords = jsonReader.read(jsonFile.toFile());
-
-            List<OutputRecord> outputRecords =
-                    validationService.validateAndMap(
-                            inputRecords,
-                            startDate,
-                            endDate,
-                            jsonFile.getFileName().toString()
-                    );
+            List<OutputRecord> outputRecords = readAndValidateJson(jsonFile);
 
             if (outputRecords.isEmpty()) {
                 System.out.println("Ziadne platne zaznamy v subore: " + jsonFile.getFileName());
@@ -148,10 +142,48 @@ public class FileProcessor {
             File outputFile = buildOutputFile(jsonFile);
             xmlWriter.write(outputRecords, outputFile);
 
+            Path signedFile = outputDir.resolve(jsonFile.getFileName().toString().replace(".json", ".signed"));
+
+            generateAndSignXml(outputFile.toPath(), signedFile);
         } catch (Exception e) {
             System.out.println("Chyba pri spracovani suboru: " + jsonFile.getFileName());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Metoda vygeneruje kluce (privatny, verejny), vytvori digitalny podpis pre dany XML subor
+     * a ulozi ho do samostaneho suboru .signed do rovnakeho priecinka ako je vstupny JSON subor.
+     * @param outputFile Cesta k XML suboru, ktory ma byt podpisany.
+     * @param signedFile Cesta k vystupnemu suboru s digitalnym podpisom.
+     * @throws Exception V pripade ak dojde k chybe pri generovani klucov alebo podpisani suboru.
+     */
+    private void generateAndSignXml(Path outputFile, Path signedFile) throws Exception {
+        // Generovanie klucov.
+        KeyPair keyPair = CertificateGenerator.generateKeyPair();
+
+        // Ak by trebalo v buducnosti overovat podpis musi sa vygenerovat cert (certifikat) a ulozit.
+        // X509Certificate cert = CertificateGenerator.generateSelfSignedCertificate(keyPair);
+
+        // Vytvori digitalny podpis pre konkretny XML subor a ulozi ho ako samostatny subor.
+        XmlSigner.signXml(outputFile, signedFile, keyPair.getPrivate());
+    }
+
+    /**
+     * Metoda nacita obsah JSON suboru a vykona validaciu vratane filtorvania podla zadanych poziadaviek.
+     * @param jsonFile Cesta k JSON suboru.
+     * @return Vrati zoznam validnych udajov. Moze vratit aj prazdny zoznam.
+     * @throws IOException Sa vykona ak dojde k chybe pri nacitani JSON suboru.
+     */
+    private List<OutputRecord> readAndValidateJson(Path jsonFile) throws IOException {
+        List<InputRecord> inputRecords = jsonReader.read(jsonFile.toFile());
+
+        return validationService.validateAndMap(
+                inputRecords,
+                startDate,
+                endDate,
+                jsonFile.getFileName().toString()
+        );
     }
 
     /**
